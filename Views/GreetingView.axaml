@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:HelloAvalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
+             x:Class="HelloAvalonia.Views.GreetingView"
+             x:DataType="vm:GreetingViewModel">
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+        <TextBlock Text="Greeting Message:"
+                   HorizontalAlignment="Center"
+                   FontSize="18" />
+
+        <TextBlock Text="{Binding Greeting.CurrentValue}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="24"/>
+
+        <TextBox Text="{Binding Text.Value, Mode=TwoWay}"
+                 Width="250"
+                 HorizontalAlignment="Center"
+                 FontSize="18"/>
+    </StackPanel>
+
+</UserControl>
