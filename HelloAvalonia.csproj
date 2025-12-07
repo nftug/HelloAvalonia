@@ -7,7 +7,15 @@
 
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <PublishAot>true</PublishAot>
     <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
     <OptimizationPreference>Size</OptimizationPreference>
