@@ -48,44 +48,6 @@ public class ContextProvider : ContentControl
         return new ContextReturn<T>((T)ctx.Context!, ctx._disposables);
     }
 
-    public static Task<ContextReturn<T>> RequireAsync<T>(
-        Control control, string? name = null, TimeSpan? timeout = null)
-        where T : class
-    {
-        timeout ??= TimeSpan.FromSeconds(10);
-
-        var tcs = new TaskCompletionSource<ContextReturn<T>>();
-        var cts = new CancellationTokenSource(timeout.Value);
-
-        void Cleanup()
-        {
-            control.PropertyChanged -= CheckContext;
-            cts.Dispose();
-        }
-
-        void CheckContext(object? _, object? __)
-        {
-            var ctx = FindProvider<T>(control, name);
-            if (ctx != null)
-            {
-                if (tcs.TrySetResult(new ContextReturn<T>((T)ctx.Context!, ctx._disposables)))
-                    Cleanup();
-            }
-        }
-
-        cts.Token.Register(() =>
-        {
-            if (tcs.TrySetException(new TimeoutException(
-                    $"Timeout while waiting for Context<{typeof(T).Name}>.")))
-                Cleanup();
-        });
-
-        control.PropertyChanged += CheckContext;
-        CheckContext(null, null); // initial
-
-        return tcs.Task;
-    }
-
     private static ContextProvider? FindProvider<T>(Control control, string? name)
         where T : class
     {

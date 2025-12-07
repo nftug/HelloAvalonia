@@ -10,9 +10,9 @@ public partial class GreetingConsumerViewModel : ViewModelBase
 {
     [ObservableProperty] private GreetingContext? context;
 
-    public async Task AttachHostsAsync(IContextViewHost viewHost)
+    public void AttachViewHosts(IContextViewHost viewHost)
     {
-        (Context, _) = await viewHost.RequireContextAsync<GreetingContext>();
+        (Context, _) = viewHost.RequireContext<GreetingContext>();
 
         Context.Text
             .Skip(1)

@@ -18,8 +18,8 @@ public partial class GreetingViewModel : ViewModelBase
         GreetingConsumerViewModel = new GreetingConsumerViewModel();
     }
 
-    public async Task AttachHostsAsync(IContextViewHost viewHost)
+    public void AttachViewHosts(IContextViewHost viewHost)
     {
-        (Context, _) = await viewHost.RequireContextAsync<GreetingContext>();
+        (Context, _) = viewHost.RequireContext<GreetingContext>();
     }
 }

@@ -1,31 +1,26 @@
 using Avalonia;
 using Avalonia.Controls;
-using HelloAvalonia.ViewModels.Shared;
+using Avalonia.Threading;
 
 namespace HelloAvalonia.Views.Shared;
 
 public abstract class UserControlBase<TViewModel> : UserControl
-    where TViewModel : ViewModelBase
+    where TViewModel : class
 {
-    private void EnsureViewModelSet()
+    protected override void OnDataContextChanged(EventArgs e)
     {
         if (DataContext is TViewModel viewModel)
         {
-            OnViewModelSet(viewModel);
+            Dispatcher.UIThread.Post(() => OnViewModelSet(viewModel), DispatcherPriority.Loaded);
         }
     }
 
-    protected override void OnDataContextChanged(EventArgs e)
+    protected virtual void OnViewModelSet(TViewModel viewModel)
     {
-        EnsureViewModelSet();
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         (DataContext as IDisposable)?.Dispose();
-    }
-
-    protected virtual void OnViewModelSet(TViewModel viewModel)
-    {
     }
 }
