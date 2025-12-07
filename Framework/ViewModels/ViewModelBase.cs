@@ -18,7 +18,7 @@ public abstract class ViewModelBase : ObservableObject, IDisposable
 
     protected virtual void Dispose(bool disposing) { }
 
-    public virtual void AttachViewHosts(IViewHost viewHost) { }
+    public virtual void AttachViewHost(IViewHost viewHost) { }
 
     public async Task InvokeAsync(Func<CancellationToken, Task> work)
         => await FrameworkUtils.InvokeAsync(Disposable, work);

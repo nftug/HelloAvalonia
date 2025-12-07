@@ -42,6 +42,6 @@ public abstract class UserControlBase : UserControl
 
     protected virtual void OnViewModelSet(ViewModelBase viewModel)
     {
-        viewModel.AttachViewHosts(new ViewHost(this));
+        viewModel.AttachViewHost(new ViewHost(this));
     }
 }

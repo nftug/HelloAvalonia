@@ -14,7 +14,7 @@ public partial class CounterActionViewModel : ViewModelBase
     [ObservableProperty] private ReactiveCommand? decrementCommand;
     [ObservableProperty] private ReactiveCommand? resetCommand;
 
-    public override void AttachViewHosts(IViewHost viewHost)
+    public override void AttachViewHost(IViewHost viewHost)
     {
         var context = viewHost.RequireContext<CounterContext>();
         var dialogService = viewHost.RequireContext<IDialogService>();

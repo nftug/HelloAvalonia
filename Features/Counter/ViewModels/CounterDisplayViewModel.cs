@@ -11,7 +11,7 @@ public partial class CounterDisplayViewModel : ViewModelBase
     [ObservableProperty] private IReadOnlyBindableReactiveProperty<int>? count;
     [ObservableProperty] private IReadOnlyBindableReactiveProperty<FizzBuzz>? fizzBuzzState;
 
-    public override void AttachViewHosts(IViewHost viewHost)
+    public override void AttachViewHost(IViewHost viewHost)
     {
         var context = viewHost.RequireContext<CounterContext>();
 
