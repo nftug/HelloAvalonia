@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:HelloAvalonia.Features.Counter.ViewModels"
+             xmlns:local="using:HelloAvalonia.Features.Counter.Views"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
+             x:Class="HelloAvalonia.Features.Counter.Views.CounterActionView"
+             x:DataType="vm:CounterActionViewModel">
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="15">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+            <Button Content="Increment" Command="{Binding IncrementCommand}"/>
+            <Button Content="Decrement" Command="{Binding DecrementCommand}"/>
+        </StackPanel>
+
+        <Button Content="Reset" Command="{Binding ResetCommand}" HorizontalAlignment="Stretch" />
+    </StackPanel>
+
+</UserControl>

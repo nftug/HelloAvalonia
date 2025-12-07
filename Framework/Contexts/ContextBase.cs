@@ -1,3 +1,4 @@
+using HelloAvalonia.Framework.Utils;
 using R3;
 
 namespace HelloAvalonia.Framework.Contexts;
@@ -14,4 +15,7 @@ public abstract class ContextBase : IDisposable
     }
 
     protected virtual void Dispose(bool disposing) { }
+
+    public async Task InvokeAsync(Func<CancellationToken, Task> work)
+        => await FrameworkUtils.InvokeAsync(Disposable, work);
 }

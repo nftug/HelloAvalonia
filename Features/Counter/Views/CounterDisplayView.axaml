@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:HelloAvalonia.Features.Counter.ViewModels"
+             xmlns:local="using:HelloAvalonia.Features.Counter.Views"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
+             x:Class="HelloAvalonia.Features.Counter.Views.CounterDisplayView"
+             x:DataType="vm:CounterDisplayViewModel">
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20" Margin="0,0,0,20">
+        <TextBlock Text="{Binding Count.Value, StringFormat='Current Count: {0}'}"
+                   HorizontalAlignment="Center"
+                   FontSize="24" />
+
+        <TextBlock Text="{Binding FizzBuzzState.Value, StringFormat='FizzBuzz State: {0}'}"
+                   HorizontalAlignment="Center"
+                   FontSize="16" />
+    </StackPanel>
+
+</UserControl>

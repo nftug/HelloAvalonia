@@ -3,15 +3,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:framework="using:HelloAvalonia.Framework.Views"
-        xmlns:greeting="using:HelloAvalonia.Features.Greeting.Views"
+        xmlns:counter="using:HelloAvalonia.Features.Counter.Views"
         xmlns:vm="using:HelloAvalonia.Shell.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="HelloAvalonia.Shell.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="{Binding Title.Value}">
+        Title="Hello Avalonia"
+        Width="800" Height="450"
+        WindowStartupLocation="CenterScreen">
 
-    <framework:ContextProvider Context="{Binding GreetingContext}">
-        <greeting:GreetingView DataContext="{Binding GreetingViewModel}"/>
+    <framework:ContextProvider Context="{Binding CounterContext}">
+        <counter:CounterPage DataContext="{Binding CounterPageViewModel}"/>
     </framework:ContextProvider>
 
 </Window>
