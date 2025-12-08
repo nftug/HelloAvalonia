@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:fa="using:FluentAvalonia.UI.Controls"
-             xmlns:controls="using:HelloAvalonia.UI.Controls"
+             xmlns:ctl="using:HelloAvalonia.UI.Controls"
              xmlns:vm="using:HelloAvalonia.Features.Counter.ViewModels"
              xmlns:local="using:HelloAvalonia.Features.Counter.Views"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
@@ -25,15 +25,15 @@
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="15">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
             <Button Command="{Binding IncrementCommand}">
-                <controls:SymbolIconLabel Symbol="Add" Label="Increment"/>
+                <ctl:SymbolIconLabel Symbol="Add" Label="Increment"/>
             </Button>
             <Button Command="{Binding DecrementCommand}">
-                <controls:SymbolIconLabel Symbol="Remove" Label="Decrement"/>
+                <ctl:SymbolIconLabel Symbol="Remove" Label="Decrement"/>
             </Button>
         </StackPanel>
 
         <Button Command="{Binding ResetCommand}">
-            <controls:SymbolIconLabel Symbol="Refresh" Label="Reset"/>
+            <ctl:SymbolIconLabel Symbol="Refresh" Label="Reset"/>
         </Button>
     </StackPanel>
 

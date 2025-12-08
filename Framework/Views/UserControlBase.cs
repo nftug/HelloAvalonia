@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using HelloAvalonia.Framework.Adapters.Contexts;
 using HelloAvalonia.Framework.ViewModels;
+using R3;
 
 namespace HelloAvalonia.Framework.Views;
 
@@ -9,6 +10,7 @@ public abstract class UserControlBase : UserControl
 {
     private bool _isAttached;
     private ViewModelBase? _viewModel;
+    protected CompositeDisposable Disposable { get; } = [];
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -23,6 +25,7 @@ public abstract class UserControlBase : UserControl
         _isAttached = false;
         _viewModel = null;
         (DataContext as IDisposable)?.Dispose();
+        Disposable.Dispose();
     }
 
     protected override void OnDataContextChanged(EventArgs e)

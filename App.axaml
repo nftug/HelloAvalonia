@@ -1,11 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sty="using:FluentAvalonia.Styling"
-             xmlns:fa="using:FluentAvalonia.UI.Controls"
-             xmlns:controls="using:HelloAvalonia.UI.Controls"
              x:Class="HelloAvalonia.App"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Styles>
         <sty:FluentAvaloniaTheme/>
@@ -18,4 +15,5 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
+
 </Application>

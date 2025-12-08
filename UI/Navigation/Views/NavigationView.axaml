@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:fa="using:FluentAvalonia.UI.Controls"
+             xmlns:ctl="using:HelloAvalonia.UI.Controls"
+             xmlns:ad="using:HelloAvalonia.UI.Navigation.Adapters"
+             xmlns:vm="using:HelloAvalonia.UI.Navigation.ViewModels"
+             xmlns:local="using:HelloAvalonia.UI.Navigation.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="HelloAvalonia.UI.Navigation.Views.NavigationView"
+             x:DataType="vm:NavigationViewModel">
+
+    <fa:NavigationView x:Name="NavView"
+                       IsBackButtonVisible="False"
+                       PaneDisplayMode="LeftCompact"
+                       MenuItemsSource="{Binding MenuItems}"
+                       FooterMenuItemsSource="{Binding FooterMenuItems}"
+                       SelectedItem="{Binding SelectedItem.Value, Mode=TwoWay}">
+
+        <DockPanel LastChildFill="True">
+            <TextBlock Text="{Binding PageTitle}"
+                       FontSize="22.0"
+                       Margin="20.0,20.0,0.0,10.0"
+                       DockPanel.Dock="Top" />
+
+            <fa:Frame x:Name="ContentFrame" IsNavigationStackEnabled="False" CacheSize="0">
+                <fa:Frame.NavigationPageFactory>
+                    <ad:NavigationPageFactory />
+                </fa:Frame.NavigationPageFactory>
+            </fa:Frame>
+        </DockPanel>
+
+    </fa:NavigationView>
+
+</UserControl>
