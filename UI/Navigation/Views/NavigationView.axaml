@@ -9,6 +9,16 @@
              x:Class="HelloAvalonia.UI.Navigation.Views.NavigationView"
              x:DataType="vm:NavigationViewModel">
 
+    <UserControl.Styles>
+        <!-- Style to prevent transition flicker on initial load -->
+        <Style Selector="fa|Frame#ContentFrame">
+            <Setter Property="IsVisible"
+                    Value="{Binding Content,
+                        RelativeSource={RelativeSource Self},
+                        Converter={x:Static ObjectConverters.IsNotNull}}"/>
+        </Style>
+    </UserControl.Styles>
+
     <fa:NavigationView IsBackButtonVisible="False"
                        PaneDisplayMode="LeftCompact"
                        MenuItemsSource="{Binding MenuItems}"

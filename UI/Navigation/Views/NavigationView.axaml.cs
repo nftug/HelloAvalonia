@@ -9,9 +9,6 @@ public partial class NavigationView : UserControlBase<NavigationViewModel>
     public NavigationView()
     {
         InitializeComponent();
-
-        // To prevent transition animation flicker on initial load
-        ContentFrame.IsVisible = false;
     }
 
     protected override void OnViewModelSet(NavigationViewModel viewModel)
@@ -19,11 +16,7 @@ public partial class NavigationView : UserControlBase<NavigationViewModel>
         base.OnViewModelSet(viewModel);
 
         viewModel.NavigateRequested
-            .Subscribe(t =>
-            {
-                ContentFrame.NavigateFromObject(t);
-                ContentFrame.IsVisible = true;
-            })
+            .Subscribe(t => ContentFrame.NavigateFromObject(t))
             .AddTo(Disposable);
     }
 }

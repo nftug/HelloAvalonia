@@ -8,9 +8,10 @@ namespace HelloAvalonia.UI.Navigation.ViewModels;
 
 public class NavigationViewModel : ViewModelBase
 {
+    private readonly NavigationContext _context;
     private readonly ReactiveCommand<string> _navigateCommand;
 
-    public IReadOnlyBindableReactiveProperty<string>? PageTitle { get; }
+    public IReadOnlyBindableReactiveProperty<string> PageTitle { get; }
     public Observable<string> NavigateRequested => _navigateCommand;
     public BindableReactiveProperty<NavigationViewItem?> SelectedItem { get; }
 
@@ -21,12 +22,14 @@ public class NavigationViewModel : ViewModelBase
 
     public NavigationViewModel(NavigationContext context, NavigationPageFactory pageFactory)
     {
+        _context = context;
+
         _navigateCommand = new ReactiveCommand<string>().AddTo(Disposable);
         SelectedItem = new BindableReactiveProperty<NavigationViewItem?>().AddTo(Disposable);
 
         PageFactory = pageFactory;
 
-        PageTitle = context.CurrentPath
+        PageTitle = _context.CurrentPath
             .Select(path =>
             {
                 var menuItem = FindMenuItemByPath(path);
@@ -35,12 +38,12 @@ public class NavigationViewModel : ViewModelBase
             .ToReadOnlyBindableReactiveProperty(string.Empty)
             .AddTo(Disposable);
 
-        context.CurrentPath
+        _context.CurrentPath
             .ObserveOnUIThreadDispatcher()
             .Subscribe(_navigateCommand.Execute)
             .AddTo(Disposable);
 
-        context.CurrentPath
+        _context.CurrentPath
             .Select(FindMenuItemByPath)
             .WhereNotNull()
             .Subscribe(item => SelectedItem.Value = item)
@@ -52,12 +55,10 @@ public class NavigationViewModel : ViewModelBase
             {
                 if (item.Tag is string path)
                 {
-                    bool navigated = await context.NavigateAsync(path, ct);
-                    if (!navigated)
+                    if (!await _context.NavigateAsync(path, ct))
                     {
                         // Revert selection if navigation failed
-                        var currentPath = context.CurrentPath.CurrentValue;
-                        SelectedItem.Value = FindMenuItemByPath(currentPath);
+                        SelectedItem.Value = FindMenuItemByPath(_context.CurrentPath.CurrentValue);
                     }
                 }
             })
@@ -70,6 +71,8 @@ public class NavigationViewModel : ViewModelBase
     {
         MenuItems = menuItems;
         FooterMenuItems = footerMenuItems;
+
+        SelectedItem.Value = FindMenuItemByPath(_context.CurrentPath.CurrentValue);
     }
 
     private NavigationViewItem? FindMenuItemByPath(string path)
