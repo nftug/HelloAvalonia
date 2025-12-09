@@ -3,6 +3,8 @@ using FluentAvalonia.UI.Controls;
 using HelloAvalonia.Features.AboutPage.Views;
 using HelloAvalonia.Features.Counter.ViewModels;
 using HelloAvalonia.Features.Counter.Views;
+using HelloAvalonia.Features.CounterList.ViewModels;
+using HelloAvalonia.Features.CounterList.Views;
 using HelloAvalonia.Framework.Adapters.Contexts;
 
 namespace HelloAvalonia.UI.Navigation.Adapters;
@@ -21,6 +23,7 @@ public class NavigationPageFactory(IServiceContainerInstance contextProvider) : 
         return target switch
         {
             "/" => ResolvePage<CounterPage, CounterPageViewModel>(),
+            "/counter-list" => ResolvePage<CounterListPage, CounterListPageViewModel>(),
             "/about" => new AboutPage(),
             _ => new TextBlock { Text = "Page not found." },
         };

@@ -23,6 +23,11 @@ public class MainWindowViewModel : ViewModelBase
                     Tag = "/",
                     IconSource = new SymbolIconSource { Symbol = Symbol.Home }
                 },
+                new NavigationViewItem {
+                    Content = "Counter List",
+                    Tag = "/counter-list",
+                    IconSource = new SymbolIconSource { Symbol = Symbol.List }
+                }
             ],
             [
                 new NavigationViewItem {

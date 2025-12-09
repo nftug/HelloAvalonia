@@ -14,8 +14,8 @@
         <Style Selector="fa|Frame#ContentFrame">
             <Setter Property="IsVisible"
                     Value="{Binding Content,
-                        RelativeSource={RelativeSource Self},
-                        Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                            RelativeSource={RelativeSource Self},
+                            Converter={x:Static ObjectConverters.IsNotNull}}"/>
         </Style>
     </UserControl.Styles>
 
