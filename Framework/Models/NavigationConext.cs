@@ -1,7 +1,7 @@
 using HelloAvalonia.Framework.Abstractions;
 using R3;
 
-namespace HelloAvalonia.Framework.Contexts;
+namespace HelloAvalonia.Framework.Models;
 
 public class NavigationContext : DisposableBase
 {

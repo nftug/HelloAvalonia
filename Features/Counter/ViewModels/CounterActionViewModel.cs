@@ -1,4 +1,4 @@
-using HelloAvalonia.Features.Counter.Contexts;
+using HelloAvalonia.Features.Counter.Models;
 using HelloAvalonia.Framework.Abstractions;
 using HelloAvalonia.UI.Adapters;
 using R3;
@@ -12,43 +12,43 @@ public class CounterActionViewModel : DisposableBase
     public ReactiveCommand DecrementCommand { get; }
     public ReactiveCommand ResetCommand { get; }
 
-    public CounterActionViewModel(CounterContext context, IDialogService dialogService)
+    public CounterActionViewModel(CounterModel model, IDialogService dialogService)
     {
-        IsLoading = context.IsLoading.ToReadOnlyBindableReactiveProperty().AddTo(Disposable);
+        IsLoading = model.IsLoading.ToReadOnlyBindableReactiveProperty().AddTo(Disposable);
 
-        IncrementCommand = context.IsLoading
-            .CombineLatest(context.Count, (isLoading, count) => !isLoading && count < int.MaxValue)
+        IncrementCommand = model.IsLoading
+            .CombineLatest(model.Count, (isLoading, count) => !isLoading && count < int.MaxValue)
             .ToReactiveCommand()
             .AddTo(Disposable);
 
-        DecrementCommand = context.IsLoading
-            .CombineLatest(context.Count, (isLoading, count) => !isLoading && count > 0)
+        DecrementCommand = model.IsLoading
+            .CombineLatest(model.Count, (isLoading, count) => !isLoading && count > 0)
             .ToReactiveCommand()
             .AddTo(Disposable);
 
-        ResetCommand = context.IsLoading
-            .CombineLatest(context.Count, (isLoading, count) => !isLoading && count != 0)
+        ResetCommand = model.IsLoading
+            .CombineLatest(model.Count, (isLoading, count) => !isLoading && count != 0)
             .ToReactiveCommand()
             .AddTo(Disposable);
 
         IncrementCommand
-            .SubscribeAwait(async (_, ct) => await context.InvokeAsync(async innerCt =>
+            .SubscribeAwait(async (_, ct) => await model.InvokeAsync(async innerCt =>
             {
-                var current = context.Count.CurrentValue;
-                await context.SetCountAsync(current + 1, TimeSpan.FromMilliseconds(100), innerCt);
+                var current = model.Count.CurrentValue;
+                await model.SetCountAsync(current + 1, TimeSpan.FromMilliseconds(100), innerCt);
             }))
             .AddTo(Disposable);
 
         DecrementCommand
-            .SubscribeAwait(async (_, ct) => await context.InvokeAsync(async innerCt =>
+            .SubscribeAwait(async (_, ct) => await model.InvokeAsync(async innerCt =>
             {
-                var current = context.Count.CurrentValue;
-                await context.SetCountAsync(current - 1, TimeSpan.FromMilliseconds(100), innerCt);
+                var current = model.Count.CurrentValue;
+                await model.SetCountAsync(current - 1, TimeSpan.FromMilliseconds(100), innerCt);
             }))
             .AddTo(Disposable);
 
         ResetCommand
-            .SubscribeAwait(async (_, ct) => await context.InvokeAsync(async innerCt =>
+            .SubscribeAwait(async (_, ct) => await model.InvokeAsync(async innerCt =>
             {
                 var result = await dialogService.ShowDialogAsync(
                     "Reset Counter",
@@ -57,7 +57,7 @@ public class CounterActionViewModel : DisposableBase
                     innerCt);
 
                 if (result == DialogResult.Yes)
-                    await context.SetCountAsync(0, TimeSpan.FromMilliseconds(1000), innerCt);
+                    await model.SetCountAsync(0, TimeSpan.FromMilliseconds(1000), innerCt);
             }))
             .AddTo(Disposable);
     }

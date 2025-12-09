@@ -1,9 +1,9 @@
 using HelloAvalonia.Framework.Abstractions;
 using R3;
 
-namespace HelloAvalonia.Features.Counter.Contexts;
+namespace HelloAvalonia.Features.Counter.Models;
 
-public class CounterContext : DisposableBase
+public class CounterModel : DisposableBase
 {
     private readonly ReactiveProperty<int> _count;
     private readonly ReactiveProperty<bool> _isLoading;
@@ -17,7 +17,7 @@ public class CounterContext : DisposableBase
         return newCount;
     }
 
-    public CounterContext()
+    public CounterModel()
     {
         _count = new ReactiveProperty<int>(0).AddTo(Disposable);
         _isLoading = new ReactiveProperty<bool>(false).AddTo(Disposable);

@@ -1,4 +1,4 @@
-using HelloAvalonia.Features.Counter.Contexts;
+using HelloAvalonia.Features.Counter.Models;
 using HelloAvalonia.Framework.Abstractions;
 using R3;
 
@@ -9,11 +9,11 @@ public class CounterDisplayViewModel : DisposableBase
     public IReadOnlyBindableReactiveProperty<int> Count { get; }
     public IReadOnlyBindableReactiveProperty<FizzBuzz> FizzBuzzState { get; }
 
-    public CounterDisplayViewModel(CounterContext context)
+    public CounterDisplayViewModel(CounterModel model)
     {
-        Count = context.Count.ToReadOnlyBindableReactiveProperty().AddTo(Disposable);
+        Count = model.Count.ToReadOnlyBindableReactiveProperty().AddTo(Disposable);
 
-        FizzBuzzState = context.Count
+        FizzBuzzState = model.Count
             .Select(count =>
                 count switch
                 {

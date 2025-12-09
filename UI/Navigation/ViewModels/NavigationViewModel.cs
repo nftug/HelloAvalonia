@@ -1,6 +1,6 @@
 using FluentAvalonia.UI.Controls;
 using HelloAvalonia.Framework.Abstractions;
-using HelloAvalonia.Framework.Contexts;
+using HelloAvalonia.Framework.Models;
 using HelloAvalonia.UI.Navigation.Adapters;
 using R3;
 

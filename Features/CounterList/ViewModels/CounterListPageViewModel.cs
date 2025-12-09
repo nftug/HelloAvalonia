@@ -9,30 +9,30 @@ namespace HelloAvalonia.Features.CounterList.ViewModels;
 
 public class CounterListPageViewModel : DisposableBase
 {
-    private readonly ObservableList<CounterListItem> _counters;
+    private readonly CounterListModel _model;
 
     public DisposableViewListEnvelope<CounterListItem, CounterListItemViewModel> CountersViewEnvelope { get; }
     public IReadOnlyBindableReactiveProperty<int> CountersSum { get; }
     public ReactiveCommand AddCommand { get; }
     public ReactiveCommand RemoveCommand { get; }
 
-    public CounterListPageViewModel()
+    public CounterListPageViewModel(CounterListModel model)
     {
-        _counters = [.. Enumerable.Range(0, 5).Select(CounterListItem.CreateNew)];
+        _model = model;
 
-        CountersViewEnvelope = _counters
+        CountersViewEnvelope = _model.Counters
             .ToDisposableViewListEnvelope(
-                model => new CounterListItemViewModel(model, updated => _counters.Update(updated, model)))
+                model => new CounterListItemViewModel(model, updated => _model.Counters.Update(updated, model)))
             .AddTo(Disposable);
 
-        CountersSum = _counters
+        CountersSum = _model.Counters
             .ObserveChangedWithPrepend()
-            .Select(_ => _counters.Sum(c => c.Value))
+            .Select(_ => _model.Counters.Sum(c => c.Value))
             .ToReadOnlyBindableReactiveProperty()
             .AddTo(Disposable);
 
         AddCommand = new ReactiveCommand().AddTo(Disposable);
-        RemoveCommand = _counters
+        RemoveCommand = _model.Counters
             .ObserveCountChanged(notifyCurrentCount: true)
             .Select(count => count > 0)
             .ToReactiveCommand()
@@ -44,16 +44,16 @@ public class CounterListPageViewModel : DisposableBase
 
     private void HandleAddCounter()
     {
-        var nextValue = _counters.Count > 0 ? _counters[^1].Value + 1 : 0;
-        _counters.Add(CounterListItem.CreateNew(nextValue));
+        var nextValue = _model.Counters.Count > 0 ? _model.Counters[^1].Value + 1 : 0;
+        _model.Counters.Add(CounterListItem.CreateNew(nextValue));
     }
 
     private void HandleRemoveCounter()
     {
-        if (_counters.Count > 0)
+        if (_model.Counters.Count > 0)
         {
-            var index = _counters.Count - 1;
-            _counters.RemoveAt(index);
+            var index = _model.Counters.Count - 1;
+            _model.Counters.RemoveAt(index);
         }
     }
 }
