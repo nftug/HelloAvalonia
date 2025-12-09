@@ -18,9 +18,9 @@ public class NavigationViewModel : DisposableBase
     public IEnumerable<NavigationViewItem> MenuItems { get; private set; } = [];
     public IEnumerable<NavigationViewItem> FooterMenuItems { get; private set; } = [];
 
-    public NavigationPageFactory PageFactory { get; }
+    public FANavigationPageFactory PageFactory { get; }
 
-    public NavigationViewModel(NavigationContext context, NavigationPageFactory pageFactory)
+    public NavigationViewModel(NavigationContext context, FANavigationPageFactory pageFactory)
     {
         _context = context;
 
@@ -30,11 +30,8 @@ public class NavigationViewModel : DisposableBase
         PageFactory = pageFactory;
 
         PageTitle = _context.CurrentPath
-            .Select(path =>
-            {
-                var menuItem = FindMenuItemByPath(path);
-                return menuItem?.Content?.ToString() ?? string.Empty;
-            })
+            .Select(FindMenuItemByPath)
+            .Select(item => item?.Content?.ToString() ?? string.Empty)
             .ToReadOnlyBindableReactiveProperty(string.Empty)
             .AddTo(Disposable);
 

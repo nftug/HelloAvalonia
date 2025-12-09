@@ -14,25 +14,18 @@ internal static class AppDI
 {
     internal static readonly Composition Composition = new();
 
-    static IConfiguration Setup() =>
+    internal static IConfiguration Setup() =>
         DI.Setup(nameof(Composition))
             // Global registrations
             .Bind<IDialogService>().As(Lifetime.Singleton).To<DialogService>()
             .Bind().As(Lifetime.Singleton).To(ctx => new NavigationContext("/"))
-
-            // Shell specific registrations
-            .Bind<MainWindowViewModel>().As(Lifetime.Transient).To<MainWindowViewModel>()
+            .RootBind<MainWindowViewModel>("MainWindow").As(Lifetime.Singleton).To<MainWindowViewModel>()
 
             // Counter feature registrations
-            .Bind<CounterModel>().As(Lifetime.Scoped).To<CounterModel>()
-            .Bind<CounterPageViewModel>().As(Lifetime.Transient).To<CounterPageViewModel>()
+            .Bind<CounterModel>().As(Lifetime.Singleton).To<CounterModel>()
+            .RootBind<CounterPageViewModel>("CounterPage").As(Lifetime.Transient).To<CounterPageViewModel>()
 
             // CounterList feature registrations
-            .Bind<CounterListModel>().As(Lifetime.Singleton).To<CounterListModel>()
-            .Bind<CounterListPageViewModel>().As(Lifetime.Transient).To<CounterListPageViewModel>()
-
-            // Composition roots
-            .Root<CounterPageRoot>("CounterPage")
-            .Root<CounterListPageRoot>("CounterListPage")
-            .Root<AppRoot>("App");
+            .Bind<CounterListModel>().As(Lifetime.Scoped).To<CounterListModel>()
+            .RootBind<CounterListPageViewModel>("CounterListPage").As(Lifetime.Transient).To<CounterListPageViewModel>();
 }
