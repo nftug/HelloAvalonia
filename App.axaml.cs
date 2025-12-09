@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using HelloAvalonia.Shell.Composition;
-using HelloAvalonia.Shell.ViewModels;
 using HelloAvalonia.Shell.Views;
 
 namespace HelloAvalonia;
@@ -16,17 +15,10 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var container = new AppContainer();
-
-        container.Run<MainWindowViewModel>(vm =>
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            vm.ContextProvider.InjectResolver(container);
-
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow = new MainWindow() { DataContext = vm };
-            }
-        });
+            desktop.MainWindow = new MainWindow() { DataContext = AppDI.Composition.App.Root };
+        }
 
         base.OnFrameworkInitializationCompleted();
     }

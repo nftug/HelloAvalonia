@@ -1,29 +1,26 @@
 using Avalonia.Controls;
 using FluentAvalonia.UI.Controls;
 using HelloAvalonia.Features.AboutPage.Views;
-using HelloAvalonia.Features.Counter.ViewModels;
 using HelloAvalonia.Features.Counter.Views;
-using HelloAvalonia.Features.CounterList.ViewModels;
 using HelloAvalonia.Features.CounterList.Views;
-using HelloAvalonia.Framework.Adapters.Contexts;
+using HelloAvalonia.Shell.Composition;
 
 namespace HelloAvalonia.UI.Navigation.Adapters;
 
-public class NavigationPageFactory(IServiceContainerInstance contextProvider) : INavigationPageFactory, IDisposable
+public sealed class NavigationPageFactory : INavigationPageFactory, IDisposable
 {
-    private IDisposable? _currentViewModelDisposable;
+    private Composition? _session;
 
     public Control GetPage(Type srcType) => throw new NotImplementedException();
 
     public Control GetPageFromObject(object target)
     {
-        _currentViewModelDisposable?.Dispose();
-        _currentViewModelDisposable = null;
+        _session?.Dispose();
 
         return target switch
         {
-            "/" => ResolvePage<CounterPage, CounterPageViewModel>(),
-            "/counter-list" => ResolvePage<CounterListPage, CounterListPageViewModel>(),
+            "/" => ResolvePage<CounterPage>(s => s.CounterPage.Root),
+            "/counter-list" => ResolvePage<CounterListPage>(s => s.CounterListPage.Root),
             "/about" => new AboutPage(),
             _ => new TextBlock { Text = "Page not found." },
         };
@@ -31,17 +28,13 @@ public class NavigationPageFactory(IServiceContainerInstance contextProvider) : 
 
     public void Dispose()
     {
-        _currentViewModelDisposable?.Dispose();
-        _currentViewModelDisposable = null;
+        _session?.Dispose();
     }
 
-    public TView ResolvePage<TView, TViewModel>()
-        where TView : Control, new()
-        where TViewModel : notnull
+    private Control ResolvePage<T>(Func<Composition, IDisposable> viewModelFactory)
+        where T : Control, new()
     {
-        var ownedViewModel = contextProvider.Resolve<TViewModel>();
-        _currentViewModelDisposable = ownedViewModel;
-
-        return new TView() { DataContext = ownedViewModel.Value };
+        _session = new Composition(AppDI.Composition);
+        return new T { DataContext = viewModelFactory(_session) };
     }
 }
