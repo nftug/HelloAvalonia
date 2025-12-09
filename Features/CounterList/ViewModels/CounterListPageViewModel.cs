@@ -1,4 +1,5 @@
 using FluentAvalonia.Core;
+using HelloAvalonia.Features.CounterList.Models;
 using HelloAvalonia.Framework.Abstractions;
 using HelloAvalonia.Framework.Utils;
 using ObservableCollections;
@@ -17,15 +18,15 @@ public class CounterListPageViewModel : DisposableBase
 
     public CounterListPageViewModel()
     {
-        _counters = [.. Enumerable.Range(0, 5).Select(i => CounterListItem.CreateNew(i))];
+        _counters = [.. Enumerable.Range(0, 5).Select(CounterListItem.CreateNew)];
 
-        var countersView = _counters
+        CountersView = _counters
             .CreateViewModelView(
                 item => new CounterListItemViewModel(item, OnItemValueChanged),
                 Disposable
-            );
-
-        CountersView = countersView.ToNotifyCollectionChanged().AddTo(Disposable);
+            )
+            .ToNotifyCollectionChanged()
+            .AddTo(Disposable);
 
         CountersSum = _counters
             .ObserveChangedWithPrepend()
@@ -59,12 +60,12 @@ public class CounterListPageViewModel : DisposableBase
         }
     }
 
-    private void OnItemValueChanged(CounterListItem item)
+    private void OnItemValueChanged(CounterListItem updatedItem)
     {
-        if (_counters.FirstOrDefault(c => c.Id == item.Id) is { } existingItem)
+        if (_counters.FirstOrDefault(c => c.Id == updatedItem.Id) is { } existingItem)
         {
             var index = _counters.IndexOf(existingItem);
-            _counters[index] = item;
+            _counters[index] = updatedItem;
         }
     }
 }

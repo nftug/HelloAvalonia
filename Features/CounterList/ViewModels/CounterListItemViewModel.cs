@@ -1,12 +1,8 @@
+using HelloAvalonia.Features.CounterList.Models;
 using HelloAvalonia.Framework.Abstractions;
 using R3;
 
 namespace HelloAvalonia.Features.CounterList.ViewModels;
-
-public record CounterListItem(Guid Id, int Value)
-{
-    public static CounterListItem CreateNew(int value) => new(Guid.NewGuid(), value);
-}
 
 public class CounterListItemViewModel : DisposableBase
 {
@@ -24,17 +20,12 @@ public class CounterListItemViewModel : DisposableBase
         IncrementCommand = new ReactiveCommand().AddTo(Disposable);
         DecrementCommand = new ReactiveCommand().AddTo(Disposable);
 
-        IncrementCommand.Subscribe(_ =>
-        {
-            onValueChanged(_model with { Value = Value + 1 });
-        })
-        .AddTo(Disposable);
-
-        DecrementCommand.Subscribe(_ =>
-        {
-            onValueChanged(_model with { Value = Value - 1 });
-        })
-        .AddTo(Disposable);
+        IncrementCommand
+            .Subscribe(_ => onValueChanged(_model with { Value = Value + 1 }))
+            .AddTo(Disposable);
+        DecrementCommand
+            .Subscribe(_ => onValueChanged(_model with { Value = Value - 1 }))
+            .AddTo(Disposable);
     }
 
     protected override void Dispose(bool disposing)
