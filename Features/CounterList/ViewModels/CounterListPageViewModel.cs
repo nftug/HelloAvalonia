@@ -1,4 +1,3 @@
-using FluentAvalonia.Core;
 using HelloAvalonia.Features.CounterList.Models;
 using HelloAvalonia.Framework.Abstractions;
 using HelloAvalonia.Framework.Utils;
@@ -13,8 +12,9 @@ public class CounterListPageViewModel : DisposableBase
 
     public DisposableViewListEnvelope<CounterListItem, CounterListItemViewModel> CountersViewEnvelope { get; }
     public IReadOnlyBindableReactiveProperty<int> CountersSum { get; }
-    public ReactiveCommand AddCommand { get; }
-    public ReactiveCommand RemoveCommand { get; }
+    public ReactiveCommand<Unit> AddCommand { get; }
+    public ReactiveCommand<Unit> RemoveCommand { get; }
+    public ReactiveCommand<Unit> SortAscendingCommand { get; }
 
     public CounterListPageViewModel(CounterListModel model)
     {
@@ -31,15 +31,16 @@ public class CounterListPageViewModel : DisposableBase
             .ToReadOnlyBindableReactiveProperty()
             .AddTo(Disposable);
 
-        AddCommand = new ReactiveCommand().AddTo(Disposable);
-        RemoveCommand = _model.Counters
-            .ObserveCountChanged(notifyCurrentCount: true)
-            .Select(count => count > 0)
-            .ToReactiveCommand()
-            .AddTo(Disposable);
+        var countersCount = _model.Counters.ObserveCountChanged(notifyCurrentCount: true);
 
-        AddCommand.Subscribe(_ => HandleAddCounter()).AddTo(Disposable);
-        RemoveCommand.Subscribe(_ => HandleRemoveCounter()).AddTo(Disposable);
+        AddCommand = new ReactiveCommand()
+            .WithSubscribe(_ => HandleAddCounter(), Disposable);
+
+        RemoveCommand = countersCount.Select(count => count > 0).ToReactiveCommand()
+            .WithSubscribe(_ => HandleRemoveCounter(), Disposable);
+
+        SortAscendingCommand = countersCount.Select(count => count > 1).ToReactiveCommand()
+            .WithSubscribe(_ => HandleSortCounters(), Disposable);
     }
 
     private void HandleAddCounter()
@@ -55,5 +56,10 @@ public class CounterListPageViewModel : DisposableBase
             var index = _model.Counters.Count - 1;
             _model.Counters.RemoveAt(index);
         }
+    }
+
+    private void HandleSortCounters()
+    {
+        _model.Counters.Sort(new CounterListItemComparer());
     }
 }

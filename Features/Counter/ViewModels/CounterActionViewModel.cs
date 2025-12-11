@@ -1,5 +1,6 @@
 using HelloAvalonia.Features.Counter.Models;
 using HelloAvalonia.Framework.Abstractions;
+using HelloAvalonia.Framework.Utils;
 using HelloAvalonia.UI.Adapters;
 using R3;
 
@@ -7,58 +8,59 @@ namespace HelloAvalonia.Features.Counter.ViewModels;
 
 public class CounterActionViewModel : DisposableBase
 {
+    private readonly CounterModel _model;
+
     public IReadOnlyBindableReactiveProperty<bool> IsLoading { get; }
-    public ReactiveCommand IncrementCommand { get; }
-    public ReactiveCommand DecrementCommand { get; }
-    public ReactiveCommand ResetCommand { get; }
+
+    public ReactiveCommand<Unit> IncrementCommand { get; }
+    public ReactiveCommand<Unit> DecrementCommand { get; }
+    public ReactiveCommand<Unit> ResetCommand { get; }
 
     public CounterActionViewModel(CounterModel model, IDialogService dialogService)
     {
-        IsLoading = model.IsLoading.ToReadOnlyBindableReactiveProperty().AddTo(Disposable);
+        _model = model;
 
-        IncrementCommand = model.IsLoading
-            .CombineLatest(model.Count, (isLoading, count) => !isLoading && count < int.MaxValue)
+        IsLoading = _model.IsLoading.ToReadOnlyBindableReactiveProperty().AddTo(Disposable);
+
+        IncrementCommand = _model.IsLoading
+            .CombineLatest(_model.Count, (isLoading, count) => !isLoading && count < int.MaxValue)
             .ToReactiveCommand()
-            .AddTo(Disposable);
+            .WithSubscribeAwait(async (_, _) => await HandleIncrementAsync(), Disposable);
 
         DecrementCommand = model.IsLoading
-            .CombineLatest(model.Count, (isLoading, count) => !isLoading && count > 0)
+            .CombineLatest(_model.Count, (isLoading, count) => !isLoading && count > 0)
             .ToReactiveCommand()
-            .AddTo(Disposable);
+            .WithSubscribeAwait(async (_, _) => await HandleDecrementAsync(), Disposable);
 
-        ResetCommand = model.IsLoading
-            .CombineLatest(model.Count, (isLoading, count) => !isLoading && count != 0)
+        ResetCommand = _model.IsLoading
+            .CombineLatest(_model.Count, (isLoading, count) => !isLoading && count != 0)
             .ToReactiveCommand()
-            .AddTo(Disposable);
+            .WithSubscribeAwait(async (_, _) => await HandleResetAsync(dialogService), Disposable);
+    }
 
-        IncrementCommand
-            .SubscribeAwait(async (_, ct) => await model.InvokeAsync(async innerCt =>
-            {
-                var current = model.Count.CurrentValue;
-                await model.SetCountAsync(current + 1, TimeSpan.FromMilliseconds(100), innerCt);
-            }))
-            .AddTo(Disposable);
+    private Task HandleIncrementAsync(CancellationToken ct = default)
+    {
+        var current = _model.Count.CurrentValue;
+        return _model.SetCountAsync(current + 1, TimeSpan.FromMilliseconds(100), ct);
+    }
 
-        DecrementCommand
-            .SubscribeAwait(async (_, ct) => await model.InvokeAsync(async innerCt =>
-            {
-                var current = model.Count.CurrentValue;
-                await model.SetCountAsync(current - 1, TimeSpan.FromMilliseconds(100), innerCt);
-            }))
-            .AddTo(Disposable);
+    private Task HandleDecrementAsync(CancellationToken ct = default)
+    {
+        var current = _model.Count.CurrentValue;
+        return _model.SetCountAsync(current - 1, TimeSpan.FromMilliseconds(100), ct);
+    }
 
-        ResetCommand
-            .SubscribeAwait(async (_, ct) => await model.InvokeAsync(async innerCt =>
-            {
-                var result = await dialogService.ShowDialogAsync(
-                    "Reset Counter",
-                    "Are you sure you want to reset the counter to zero?",
-                    new YesNoDialogButtons("Yes", "No"),
-                    innerCt);
+    private async Task HandleResetAsync(IDialogService dialogService, CancellationToken ct = default)
+    {
+        var result = await dialogService.ShowDialogAsync(
+            "Reset Counter",
+            "Are you sure you want to reset the counter to zero?",
+            new YesNoDialogButtons("Yes", "No"),
+            ct);
 
-                if (result == DialogResult.Yes)
-                    await model.SetCountAsync(0, TimeSpan.FromMilliseconds(1000), innerCt);
-            }))
-            .AddTo(Disposable);
+        if (result == DialogResult.Yes)
+        {
+            await _model.SetCountAsync(0, TimeSpan.FromMilliseconds(3000), ct);
+        }
     }
 }

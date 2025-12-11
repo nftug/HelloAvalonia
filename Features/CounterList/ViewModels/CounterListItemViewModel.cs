@@ -1,5 +1,6 @@
 using HelloAvalonia.Features.CounterList.Models;
 using HelloAvalonia.Framework.Abstractions;
+using HelloAvalonia.Framework.Utils;
 using R3;
 
 namespace HelloAvalonia.Features.CounterList.ViewModels;
@@ -9,27 +10,18 @@ public class CounterListItemViewModel : DisposableBase
     private readonly CounterListItem _model;
 
     public int Value => _model.Value;
-    public ReactiveCommand IncrementCommand { get; }
-    public ReactiveCommand DecrementCommand { get; }
+
+    public ReactiveCommand<Unit> IncrementCommand { get; }
+    public ReactiveCommand<Unit> DecrementCommand { get; }
 
     public CounterListItemViewModel(CounterListItem model, Action<CounterListItem> updateModel)
     {
         _model = model;
 
-        IncrementCommand = new ReactiveCommand().AddTo(Disposable);
-        DecrementCommand = Observable.Return(Value > 0).ToReactiveCommand().AddTo(Disposable);
+        IncrementCommand = new ReactiveCommand<Unit>()
+            .WithSubscribe(_ => updateModel(_model with { Value = Value + 1 }), Disposable);
 
-        IncrementCommand
-            .Subscribe(_ => updateModel(_model with { Value = Value + 1 }))
-            .AddTo(Disposable);
-        DecrementCommand
-            .Subscribe(_ => updateModel(_model with { Value = Value - 1 }))
-            .AddTo(Disposable);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        Console.WriteLine($"CounterListItemViewModel Disposed: {_model.Id}");
+        DecrementCommand = Observable.Return(Value > 0).ToReactiveCommand()
+            .WithSubscribe(_ => updateModel(_model with { Value = Value - 1 }), Disposable);
     }
 }

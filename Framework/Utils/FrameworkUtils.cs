@@ -28,15 +28,21 @@ public static class FrameworkUtils
             ?? throw new InvalidOperationException($"Control of type {typeof(TControl).Name} not found.");
     }
 
-    public static async Task InvokeAsync(CompositeDisposable disposables, Func<CancellationToken, Task> work)
+    public static async Task InvokeAsync(
+        CompositeDisposable disposables,
+        Func<CancellationToken, Task> work,
+        CancellationToken ct = default)
     {
         // Create a linked cancellation token source
-        var cts = new CancellationTokenSource();
-        disposables.Add(Disposable.Create(cts.Cancel));
+        var innerCt = new CancellationTokenSource();
+        disposables.Add(Disposable.Create(innerCt.Cancel));
+
+        // If ct is cancelled, innerCt will be cancelled as well.
+        innerCt = CancellationTokenSource.CreateLinkedTokenSource(ct, innerCt.Token);
 
         try
         {
-            await work(cts.Token);
+            await work(innerCt.Token);
         }
         catch (OperationCanceledException)
         {
@@ -48,9 +54,22 @@ public static class FrameworkUtils
 
     public static Observable<Unit> ObserveChangedWithPrepend<T>(this IObservableCollection<T> source)
     {
-        return source
-            .ObserveChanged()
-            .Select(_ => Unit.Default)
-            .Prepend(Unit.Default);
+        return source.ObserveChanged().Select(_ => Unit.Default).Prepend(Unit.Default);
+    }
+
+    public static ReactiveCommand<T> WithSubscribe<T>(
+        this ReactiveCommand<T> command, Action<T> onExecute, CompositeDisposable disposables)
+    {
+        command.Subscribe(onExecute).AddTo(disposables);
+        return command.AddTo(disposables);
+    }
+
+    public static ReactiveCommand<T> WithSubscribeAwait<T>(
+        this ReactiveCommand<T> command,
+        Func<T, CancellationToken, ValueTask> onExecuteAsync,
+        CompositeDisposable disposables)
+    {
+        command.SubscribeAwait(onExecuteAsync).AddTo(disposables);
+        return command.AddTo(disposables);
     }
 }

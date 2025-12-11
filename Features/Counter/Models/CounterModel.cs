@@ -23,17 +23,19 @@ public class CounterModel : DisposableBase
         _isLoading = new ReactiveProperty<bool>(false).AddTo(Disposable);
     }
 
-    public async Task SetCountAsync(int newCount, TimeSpan delay, CancellationToken ct = default)
-    {
-        _isLoading.Value = true;
-        try
+    public Task SetCountAsync(int newCount, TimeSpan delay, CancellationToken ct = default)
+        => InvokeAsync(async innerCt =>
         {
-            int fetchedCount = await FetchDelayedCountAsync(newCount, delay, ct);
-            _count.Value = fetchedCount;
-        }
-        finally
-        {
-            _isLoading.Value = false;
-        }
-    }
+            _isLoading.Value = true;
+
+            try
+            {
+                var fetchedCount = await FetchDelayedCountAsync(newCount, delay, innerCt);
+                _count.Value = fetchedCount;
+            }
+            finally
+            {
+                _isLoading.Value = false;
+            }
+        }, ct);
 }

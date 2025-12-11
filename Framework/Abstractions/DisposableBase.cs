@@ -21,6 +21,6 @@ public abstract class DisposableBase : IDisposable
 
     protected virtual void Dispose(bool disposing) { }
 
-    public async Task InvokeAsync(Func<CancellationToken, Task> work)
-        => await FrameworkUtils.InvokeAsync(Disposable, work);
+    public async Task InvokeAsync(Func<CancellationToken, Task> work, CancellationToken ct = default)
+        => await FrameworkUtils.InvokeAsync(Disposable, work, ct);
 }

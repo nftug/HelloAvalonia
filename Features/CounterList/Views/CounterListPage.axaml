@@ -18,6 +18,10 @@
                         Command="{Binding RemoveCommand}"
                         Width="110"
                         Height="35"/>
+                <Button Content="Sort Asc"
+                        Command="{Binding SortAscendingCommand}"
+                        Width="110"
+                        Height="35"/>
             </StackPanel>
 
             <TextBlock Text="{Binding CountersSum.Value, StringFormat='Counters Sum: {0}'}"

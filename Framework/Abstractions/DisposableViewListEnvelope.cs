@@ -11,7 +11,7 @@ public sealed class DisposableViewListEnvelope<T, TView> : IDisposable
 
     public INotifyCollectionChangedSynchronizedViewList<TView> View { get; }
 
-    public DisposableViewListEnvelope(IObservableCollection<T> source, Func<T, TView> transform)
+    public DisposableViewListEnvelope(ObservableList<T> source, Func<T, TView> transform)
     {
         _synchronizedView = source.CreateView(transform).AddTo(_disposables);
 
@@ -23,7 +23,8 @@ public sealed class DisposableViewListEnvelope<T, TView> : IDisposable
 
         _synchronizedView
             .ObserveReset()
-            .Subscribe(_ => _synchronizedView.ToList().ForEach(v => v.Dispose()))
+            .Where(e => e.IsClear)
+            .Subscribe(e => _synchronizedView.ToList().ForEach(v => v.Dispose()))
             .AddTo(_disposables);
 
         Disposable
