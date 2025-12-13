@@ -29,6 +29,10 @@ public class CounterActionViewModel : BindableBase
         InputCount = new BindableReactiveProperty<int>(_model.Count.CurrentValue)
             .AddTo(Disposable);
 
+        _model.Count
+            .Subscribe(count => InputCount.Value = count)
+            .AddTo(Disposable);
+
         IncrementCommand = _model.IsLoading
             .CombineLatest(_model.Count, (isLoading, count) => !isLoading && count < int.MaxValue)
             .ToReactiveCommand()

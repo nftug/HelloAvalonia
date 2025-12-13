@@ -1,5 +1,7 @@
 using Avalonia.Controls;
+using HelloAvalonia.Framework.Abstractions;
 using HelloAvalonia.Framework.Interfaces;
+using HelloAvalonia.Framework.Views;
 
 namespace HelloAvalonia.Framework.Models;
 
@@ -29,7 +31,8 @@ public abstract class NavigationPageStoreBase(ICompositionScopeFactory scopeFact
     protected abstract Control CreatePageFromPath(string path);
 
     protected Control Resolve<T, TViewModel>()
-        where T : Control, new()
+        where T : UserControlBase<TViewModel>, new()
+        where TViewModel : BindableBase
     {
         _scope ??= scopeFactory.CreateScope();
         return new T { DataContext = _scope.Resolve<TViewModel>() };
