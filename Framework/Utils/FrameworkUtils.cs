@@ -33,16 +33,14 @@ public static class FrameworkUtils
         Func<CancellationToken, Task> work,
         CancellationToken ct = default)
     {
-        // Create a linked cancellation token source
-        var innerCt = new CancellationTokenSource();
-        disposables.Add(Disposable.Create(innerCt.Cancel));
+        using var disposeCts = new CancellationTokenSource();
+        disposables.Add(Disposable.Create(disposeCts.Cancel));
 
-        // If ct is cancelled, innerCt will be cancelled as well.
-        innerCt = CancellationTokenSource.CreateLinkedTokenSource(ct, innerCt.Token);
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, disposeCts.Token);
 
         try
         {
-            await work(innerCt.Token);
+            await work(linkedCts.Token);
         }
         catch (OperationCanceledException)
         {
